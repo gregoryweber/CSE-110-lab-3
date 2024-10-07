@@ -27,8 +27,8 @@ function ClickCounter() {
 }
 
 // Wrapper component to provide context
-function ToggleTheme() {
-  const [currentTheme, setCurrentTheme] = useState(themes.light);
+function ToggleTheme({ setCurrentTheme }: { setCurrentTheme: any }) {
+  const currentTheme = useContext(ThemeContext);
 
   const toggleTheme = () => {
     setCurrentTheme(currentTheme === themes.light ? themes.dark : themes.light);

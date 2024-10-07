@@ -1,71 +1,136 @@
 import { dummyNotesList } from "./constants"; // Import the dummyNotesList from the appropriate module
-import ToggleTheme from "./hooksExercise";
 
 import "./App.css";
 import { useContext, useState } from "react";
-import { ThemeContext } from "./ThemeContext";
+import { ThemeContext, themes } from "./ThemeContext";
+import { Label, Note } from "./types";
+
+import ToggleTheme from "./hooksExercise";
 
 function App() {
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const theme = useContext(ThemeContext);
+  const [favorites, setFavorites] = useState<Note[]>([]);
+
+  const [notes, setNotes] = useState(dummyNotesList);
+  const initialNote = {
+    id: -1,
+    title: "",
+    content: "",
+    label: Label.other,
+  };
+  const [createNote, setCreateNote] = useState(initialNote);
+  const [selectedNote, setSelectedNote] = useState<Note>(initialNote);
+
+  const [currId, setCurrId] = useState(7);
+
+  const [currentTheme, setCurrentTheme] = useState(themes.light);
+
+  function createNoteHandler(event: { preventDefault: () => void }) {
+    event.preventDefault();
+    setNotes([...notes, { ...createNote, id: currId }]);
+    setCurrId(currId + 1);
+  }
 
   return (
-    <div className="app-container">
-      <ToggleTheme />
-      <form className="note-form">
-        <div>
-          <input placeholder="Note Title"></input>
-        </div>
+    <ThemeContext.Provider value={currentTheme}>
+      <div className="app-container">
+        <ToggleTheme setCurrentTheme={setCurrentTheme} />
+        <form className="note-form" onSubmit={createNoteHandler}>
+          <div>
+            <input
+              placeholder="Note Title"
+              onChange={(event) =>
+                setCreateNote({ ...createNote, title: event.target.value })
+              }
+              required></input>
+          </div>
 
-        <div>
-          <textarea></textarea>
-        </div>
+          <div>
+            <textarea
+              onChange={(event) =>
+                setCreateNote({ ...createNote, content: event.target.value })
+              }
+              required></textarea>
+          </div>
 
-        <div>
-          <button type="submit">Create Note</button>
-        </div>
+          <div>
+            <select
+              onChange={(event) =>
+                setCreateNote({
+                  ...createNote,
+                  label: event.target.value as Label,
+                })
+              }
+              required>
+              <option value={Label.personal}>Personal</option>
+              <option value={Label.study}>Study</option>
+              <option value={Label.work}>Work</option>
+              <option value={Label.other}>Other</option>
+            </select>
+          </div>
 
-        <div>
-          <h1>List of Favorites:</h1>
-          {favorites.map((note) => (
-            <div key={note}>{note}</div>
+          <div>
+            <button type="submit">Create Note</button>
+          </div>
+          <div>
+            <h1>List of favorites:</h1>
+            {favorites.map((note) => (
+              <div key={note.id}>{note.title}</div>
+            ))}
+          </div>
+        </form>
+
+        <div className="notes-grid">
+          {notes.map((note) => (
+            <div
+              key={note.id}
+              className="note-item"
+              style={{
+                background: currentTheme.background,
+                color: currentTheme.foreground,
+              }}>
+              <div className="notes-header">
+                <button
+                  onClick={() => {
+                    if (favorites.includes(note)) {
+                      const newFavorites = [...favorites];
+                      newFavorites.splice(newFavorites.indexOf(note), 1);
+                      setFavorites(newFavorites);
+                    } else {
+                      setFavorites([...favorites, note]);
+                    }
+                  }}>
+                  {favorites.includes(note) ? (
+                    <div>❤️</div>
+                  ) : (
+                    <div
+                      style={{
+                        color: currentTheme.foreground,
+                      }}>
+                      ♡
+                    </div>
+                  )}
+                </button>
+                <button>x</button>
+              </div>
+              <h2
+                contentEditable="true"
+                onFocus={() =>
+                  setSelectedNote({
+                    id: note.id,
+                    title: note.title,
+                    content: note.content,
+                    label: note.label,
+                  })
+                }>
+                {note.title}
+              </h2>
+              <p contentEditable="true"> {note.content} </p>
+              <p contentEditable="true"> {note.label} </p>
+            </div>
           ))}
         </div>
-      </form>
-      <div className="notes-grid">
-        {dummyNotesList.map((note) => (
-          <div key={note.id} className="note-item">
-            <div className="notes-header">
-              <button
-                onClick={() => {
-                  if (favorites.includes(note.title)) {
-                    const newFavorites = [...favorites];
-                    newFavorites.splice(newFavorites.indexOf(note.title), 1);
-                    setFavorites(newFavorites);
-                  } else {
-                    setFavorites([...favorites, note.title]);
-                  }
-                }}>
-                {favorites.includes(note.title) ? (
-                  <div>❤️</div>
-                ) : (
-                  <div
-                    style={{
-                      color: theme.foreground,
-                    }}>
-                    ♡
-                  </div>
-                )}
-              </button>
-              <button>x</button>
-            </div>
-            <h2> {note.title} </h2>
-            <p> {note.content} </p>
-            <p> {note.label} </p>
-          </div>
-        ))}
       </div>
-    </div>
+    </ThemeContext.Provider>
   );
 }
 
