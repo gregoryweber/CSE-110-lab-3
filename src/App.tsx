@@ -132,7 +132,15 @@ function App() {
                     content: note.content,
                     label: note.label,
                   })
-                }>
+                }
+                onInput={(event: React.ChangeEvent<HTMLDivElement>) => {
+                  setSelectedNote({
+                    id: note.id,
+                    title: event.target.innerText,
+                    content: note.content,
+                    label: note.label,
+                  });
+                }}>
                 {note.title}
               </h2>
               <p contentEditable="true"> {note.content} </p>
