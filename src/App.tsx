@@ -1,7 +1,7 @@
 import { dummyNotesList } from "./constants"; // Import the dummyNotesList from the appropriate module
 
 import "./App.css";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { ThemeContext, themes } from "./ThemeContext";
 import { Label, Note } from "./types";
 
@@ -110,7 +110,18 @@ function App() {
                     </div>
                   )}
                 </button>
-                <button>x</button>
+                <button
+                  onClick={() => {
+                    setNotes(notes.filter((n) => n.id !== note.id));
+                    if (favorites.includes(note)) {
+                      const newFavorites = [...favorites];
+                      newFavorites.splice(newFavorites.indexOf(note), 1);
+                      setFavorites(newFavorites);
+                    }
+                  }}
+                  style={{ color: currentTheme.foreground }}>
+                  x
+                </button>
               </div>
               <h2
                 contentEditable="true"
