@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { StickyNotes } from "./stickyNotes";
 import { dummyNotesList } from "./constants";
 
+// Tests whether
 describe("Create StickyNote", () => {
   test("renders create note form", () => {
     render(<StickyNotes />);
