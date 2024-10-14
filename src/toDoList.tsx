@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler } from "react";
+import { useParams } from "react-router-dom";
 import "./App.css";
 import { useState } from "react";
 import { GroceryItem } from "./types";
@@ -8,6 +9,8 @@ export function ToDoList() {
   const [numRemainingItems, setNumRemainingItems] = useState(0);
 
   let [items, setItems] = useState(dummyGroceryList);
+
+  const { name } = useParams();
 
   function handleCheckboxClick(e: React.ChangeEvent<HTMLInputElement>) {
     const checkbox: HTMLInputElement = e.target as HTMLInputElement;
@@ -32,6 +35,7 @@ export function ToDoList() {
   return (
     <div className="App">
       <div className="App-body">
+        <h1>{name}'s To Do List</h1>
         Items bought: {numRemainingItems}
         <form action=".">
           {items.map((item) => ListItem(item, handleCheckboxClick))}

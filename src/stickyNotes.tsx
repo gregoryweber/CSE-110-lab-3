@@ -46,6 +46,7 @@ export const StickyNotes = () => {
 
           <div>
             <textarea
+              placeholder="Note Content"
               onChange={(event) =>
                 setCreateNote({ ...createNote, content: event.target.value })
               }
@@ -111,6 +112,7 @@ export const StickyNotes = () => {
                   )}
                 </button>
                 <button
+                  className="delete-button"
                   onClick={() => {
                     setNotes(notes.filter((n) => n.id !== note.id));
                     if (favorites.includes(note)) {
